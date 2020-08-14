@@ -1,6 +1,7 @@
 /****   request.js   ****/
 // 导入axios
 import axios from 'axios'
+import Cookie from 'js-cookie'
 // 使用element-ui Message做消息提醒
 import { Message} from 'element-ui';
 //1. 创建新的axios实例，
@@ -14,11 +15,17 @@ const service = axios.create({
 service.interceptors.request.use(config => {
   //发请求前做的一些处理，数据转化，配置请求头，设置token,设置loading等，根据需求去添加
    config.data = JSON.stringify(config.data); //数据转化,也可以使用qs转换
-   config.headers = {
-     'Content-Type':'application/x-www-form-urlencoded' //配置请求头
-   }
+   if(!config.headers){
+      config.headers = {
+        'Content-Type':'application/x-www-form-urlencoded' //配置请求头
+      }
+  }
+  var tokenStr = localStorage.getItem('token');
+  if(tokenStr){
+    config.headers.Authorization = tokenStr;
+  }
    //注意使用token的时候需要引入cookie方法或者用本地localStorage等方法，推荐js-cookie
-   const token = getCookie('名称');//这里取token之前，你肯定需要先拿到token,存一下
+   const token = Cookie.get('token');//这里取token之前，你肯定需要先拿到token,存一下
    if(token){
       config.params = {'token':token} //如果要求携带在参数中
       config.headers.token= token; //如果要求携带在请求头中
@@ -31,10 +38,17 @@ service.interceptors.request.use(config => {
 // 3.响应拦截器
 service.interceptors.response.use(response => {
   //接收到响应数据并成功后的一些共有的处理，关闭loading等
-  
-  return response
+  var res = response.data
+  if(res.code != 200){
+    console.log(res)
+      Message.error(res.msg);
+  }else{
+    Message.success(res.msg);
+  }
+  return res
 }, error => {
-   /***** 接收到异常响应的处理开始 *****/
+  
+  /***** 接收到异常响应的处理开始 *****/
   if (error && error.response) {
     // 1.公共错误处理
     // 2.根据响应码具体处理
@@ -50,7 +64,7 @@ service.interceptors.response.use(response => {
         break;
       case 404:
         error.message = '请求错误,未找到该资源'
-        window.location.href = "/NotFound"
+        // window.location.href = "/NotFound"
         break;
       case 405:
         error.message = '请求方法未允许'
@@ -80,6 +94,7 @@ service.interceptors.response.use(response => {
         error.message = `连接错误${error.response.status}`
     }
   } else {
+    // console.log(error);
     // 超时处理
     if (JSON.stringify(error).includes('timeout')) {
       Message.error('服务器响应超时，请刷新当前页')

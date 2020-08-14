@@ -21,6 +21,7 @@ const http ={
             method: 'post',
             url:url
         }
+        config.headers = { 'Content-Type':'application/json;charset=UTF-8'}
         if(params) config.data = params
         return request(config)
     },

@@ -15,7 +15,8 @@
 </template>
 
 <script>
-import  api from '@/api/auth/auth'
+import auth from '@/api/auth/auth'
+import md5 from 'js-md5'
   export default {
     name: "Login",
     data(){
@@ -31,27 +32,33 @@ import  api from '@/api/auth/auth'
     methods:{
       login(){
         // const { name, pwd, $router} = this
-      var params = {username:this.username,password:this.password}
-       api.post(params).then(res=>{
-          console.log(res);
-
+      var params = {username:this.username,password:md5(this.password)}
+       auth.login(params).then(res=>{
+          localStorage.setItem('loginInfo',JSON.stringify(res.data));
+          localStorage.setItem('token',res.data.token);
+          this.$router.push({
+          name: "main",
+          params: {
+            username: this.name
+          }
+        });
        }).catch(error=> {console.log(error)})
        
 
 
-       this.$http({
-            url:'/auth/login',
-            method:'post'
-        }).then(res => {
-          if(res.code == 200 ){
-              console.log(res);
-          }else{
-            this.$message({
-              message:'error',
-              type:'error'
-            })
-          }
-        })
+      //  this.$http({
+      //       url:'/auth/login',
+      //       method:'post'
+      //   }).then(res => {
+      //     if(res.code == 200 ){
+      //         console.log(res);
+      //     }else{
+      //       this.$message({
+      //         message:'error',
+      //         type:'error'
+      //       })
+      //     }
+      //   })
         // this.$router.push({
         //   name: "main",
         //   params: {
