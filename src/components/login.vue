@@ -37,13 +37,13 @@ import md5 from 'js-md5'
           localStorage.setItem('loginInfo',JSON.stringify(res.data));
           localStorage.setItem('token',res.data.token);
           this.$router.push({
-          name: "main",
+          name: "playerDemo",
           params: {
             username: this.name
           }
         });
        }).catch(error=> {console.log(error)})
-       
+
 
 
       //  this.$http({

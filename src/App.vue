@@ -14,7 +14,7 @@
             </keep-alive>
           </el-main>
           <el-footer style=" padding-left: 0px;padding-right: 0px;">
-            <v_footer></v_footer>
+            <!-- <v_footer></v_footer> -->
           </el-footer>
         </el-container>
       </el-container>
@@ -32,7 +32,7 @@ export default {
   components: {
     'v_Navigation': Navigation,
     // 'v_leftmenu': LeftMenu,
-    'v_footer': Footer
+    // 'v_footer': Footer
   }
 }
 </script>
